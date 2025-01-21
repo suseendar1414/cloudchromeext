@@ -133,16 +133,34 @@ async function handleChat() {
   sendButton.disabled = true;
   addChatMessage(message, true);
   chatInput.value = '';
+
+  // Add loading animation
+  const loadingDiv = createElement('div', 'ai-loading');
+  const spinner = createElement('div', 'ai-loading-spinner');
+  const typingAnimation = createElement('div', 'typing-animation');
+  for (let i = 0; i < 3; i++) {
+    typingAnimation.appendChild(createElement('div', 'typing-dot'));
+  }
+  const loadingText = createElement('span', '', 'Analyzing infrastructure...');
+  loadingDiv.appendChild(spinner);
+  loadingDiv.appendChild(typingAnimation);
+  loadingDiv.appendChild(loadingText);
+  const chatMessages = document.getElementById('chatMessages');
+  chatMessages.appendChild(loadingDiv);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
   try {
     const stored = await chrome.storage.local.get(['awsCredentials', 'lastScanResults']);
     if (!stored.awsCredentials || !stored.lastScanResults) {
+      chatMessages.removeChild(loadingDiv);
       addChatMessage("Please add your AWS credentials and run a scan first.");
       return;
     }
     const response = await handleAIQuery(message, stored.lastScanResults);
+    chatMessages.removeChild(loadingDiv);
     addChatMessage(response);
   } catch (error) {
     console.error('Chat error:', error);
+    chatMessages.removeChild(loadingDiv);
     addChatMessage('Sorry, I encountered an error. Please try again.');
     _analytics.default.trackError('chat_error', error.message);
   } finally {
@@ -383,6 +401,34 @@ function updateDashboard(regionResults) {
     });
     dashboard.appendChild(inactiveRegionsSection);
   }
+}
+function addRegionFilter() {
+  const filterContainer = createElement('div', 'region-filter');
+  const select = createElement('select');
+  select.innerHTML = `
+        <option value="all">All Regions</option>
+        ${regions.map(r => `<option value="${r}">${r}</option>`).join('')}
+    `;
+  select.addEventListener('change', e => {
+    const selectedRegion = e.target.value;
+    filterDashboardByRegion(selectedRegion);
+  });
+  filterContainer.appendChild(select);
+  dashboard.insertBefore(filterContainer, dashboard.firstChild);
+}
+function addServiceToggles() {
+  const toggleContainer = createElement('div', 'service-toggles');
+  const serviceTypes = ['Compute', 'Storage', 'Database', 'Networking'];
+  serviceTypes.forEach(type => {
+    const toggle = createElement('button', 'service-toggle');
+    toggle.textContent = type;
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('active');
+      filterServicesByType(type);
+    });
+    toggleContainer.appendChild(toggle);
+  });
+  dashboard.insertBefore(toggleContainer, dashboard.firstChild);
 }
 
 // Initialize on DOM load
