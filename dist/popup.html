@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AWS Infrastructure Analyzer</title>
+    <script src="aws-sdk.min.js"></script>
+    <script src="analytics.js" type="module"></script>
+    <script src="popup.js" type="module"></script>
+    <style>
+        body {
+            width: 800px;
+            min-height: 600px;
+            margin: 0;
+            padding: 16px;
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        #credentialsForm {
+            background-color: #f5f5f5;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0052a3;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #dashboard {
+            margin-top: 16px;
+        }
+
+        .region-summary {
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        .region-summary.active {
+            background-color: #f0f8ff;
+        }
+
+        .region-summary.inactive {
+            background-color: #fff0f0;
+        }
+
+        .service-counts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .service-count {
+            background-color: #e6e6e6;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .error-message {
+            color: #dc3545;
+            padding: 8px;
+            background-color: #fff0f0;
+            border-radius: 4px;
+            margin: 8px 0;
+        }
+
+        #loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .scanning-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0066cc;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chat-section {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 16px;
+        }
+
+        #chatMessages {
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 8px;
+            margin-bottom: 12px;
+            border-radius: 4px;
+        }
+
+        .message {
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .user-message {
+            background-color: #e6f3ff;
+            margin-left: 20%;
+        }
+
+        .assistant-message {
+            background-color: #f5f5f5;
+            margin-right: 20%;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        #chatInput {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .timestamp {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>AWS Infrastructure Analyzer</h2>
+        <button id="toggleCredentials" class="btn">Show Credentials</button>
+    </div>
+    
+    <form id="credentialsForm">
+        <div class="input-group">
+            <label for="accessKey">Access Key:</label>
+            <input type="text" id="accessKey" required>
+        </div>
+        <div class="input-group">
+            <label for="secretKey">Secret Key:</label>
+            <input type="password" id="secretKey" required>
+        </div>
+        <button type="button" id="saveCredentials">Save & Scan</button>
+    </form>
+
+    <div id="dashboard">
+        <!-- Dashboard content will be dynamically populated -->
+    </div>
+
+    <div id="loading">
+        <div class="scanning-spinner"></div>
+    </div>
+
+    <div class="chat-section">
+        <h3>Infrastructure Assistant</h3>
+        <div id="chatMessages"></div>
+        <div class="chat-input-container">
+            <input type="text" id="chatInput" placeholder="Ask about your infrastructure...">
+            <button id="sendMessage">Send</button>
+        </div>
+    </div>
+</body>
+</html>

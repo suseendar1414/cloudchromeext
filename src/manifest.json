@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "AWS Infrastructure Analyzer",
+    "version": "1.0.0",
+    "description": "Analyze and monitor your AWS infrastructure resources across regions",
+    "permissions": [
+      "storage",
+      "activeTab"
+    ],
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "background": {
+      "service_worker": "background.js",
+      "type": "module"
+    },
+    "content_security_policy": {
+      "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+    },
+    "host_permissions": [
+      "https://*.amazonaws.com/*",
+      "https://www.googletagmanager.com/*"
+    ]
+  }
