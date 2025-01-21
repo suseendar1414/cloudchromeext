@@ -8,10 +8,10 @@
     <script src="popup.js" type="module"></script>
     <style>
         body {
-            width: 800px;
+            width: 1600px;
             min-height: 600px;
             margin: 0;
-            padding: 16px;
+            padding: 20px;
             font-family: Arial, sans-serif;
         }
 
@@ -76,11 +76,88 @@
         }
 
         .region-summary.active {
-            background-color: #f0f8ff;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
         }
 
-        .region-summary.inactive {
-            background-color: #fff0f0;
+        .region-summary.active:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .region-header {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .region-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            padding: 16px;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        .service-item.has-resources {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .resource-count {
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        .region-metrics {
+            padding: 12px 16px;
+            background: #fafafa;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .metric-label {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .active-regions-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 16px;
         }
 
         .service-counts {
@@ -346,14 +423,6 @@
         <button type="button" id="saveCredentials">Save & Scan</button>
     </form>
 
-    <div id="dashboard">
-        <!-- Dashboard content will be dynamically populated -->
-    </div>
-
-    <div id="loading">
-        <div class="scanning-spinner"></div>
-    </div>
-
     <div class="chat-section">
         <h3>Infrastructure Assistant</h3>
         <div id="chatMessages"></div>
@@ -362,5 +431,15 @@
             <button id="sendMessage">Send</button>
         </div>
     </div>
+
+    <div id="dashboard">
+        <!-- Dashboard content will be dynamically populated -->
+    </div>
+
+    <div id="loading">
+        <div class="scanning-spinner"></div>
+    </div>
+
+    
 </body>
 </html>

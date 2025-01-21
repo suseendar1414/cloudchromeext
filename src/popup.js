@@ -283,18 +283,41 @@ function updateDashboard(regionResults) {
     
     activeRegions.forEach(region => {
         const regionDiv = createElement('div', 'region-summary active');
-        regionDiv.appendChild(createElement('h4', '', region.region));
         
-        const serviceCounts = createElement('div', 'service-counts');
+        // Region header
+        const headerDiv = createElement('div', 'region-header');
+        headerDiv.appendChild(createElement('span', 'region-name', region.region));
+        regionDiv.appendChild(headerDiv);
+        
+        // Services grid
+        const servicesGrid = createElement('div', 'service-grid');
         Object.entries(region.services).forEach(([service, count]) => {
-            if (count > 0) {
-                const serviceCount = createElement('span', `service-count ${service}`, 
-                    `${service.toUpperCase()}: ${count}`);
-                serviceCounts.appendChild(serviceCount);
-            }
+            const serviceItem = createElement('div', `service-item ${count > 0 ? 'has-resources' : ''}`);
+            serviceItem.appendChild(createElement('span', 'service-name', service.toUpperCase()));
+            serviceItem.appendChild(createElement('span', 'resource-count', count));
+            servicesGrid.appendChild(serviceItem);
         });
+        regionDiv.appendChild(servicesGrid);
         
-        regionDiv.appendChild(serviceCounts);
+        // Region metrics
+        const metricsDiv = createElement('div', 'region-metrics');
+        
+        // Calculate total resources
+        const totalResources = Object.values(region.services).reduce((a, b) => a + b, 0);
+        const activeServices = Object.values(region.services).filter(count => count > 0).length;
+        
+        // Add metrics
+        const resourceMetric = createElement('div', 'metric');
+        resourceMetric.appendChild(createElement('div', 'metric-value', totalResources));
+        resourceMetric.appendChild(createElement('div', 'metric-label', 'Total Resources'));
+        metricsDiv.appendChild(resourceMetric);
+        
+        const serviceMetric = createElement('div', 'metric');
+        serviceMetric.appendChild(createElement('div', 'metric-value', activeServices));
+        serviceMetric.appendChild(createElement('div', 'metric-label', 'Active Services'));
+        metricsDiv.appendChild(serviceMetric);
+        
+        regionDiv.appendChild(metricsDiv);
         activeRegionsSection.appendChild(regionDiv);
     });
     
